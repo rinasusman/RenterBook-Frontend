@@ -1,6 +1,6 @@
 import { adminapiSlice } from "./apiSliceadmin";
 
-const ADMIN_URL = 'http://localhost:5000/admin'
+const ADMIN_URL = 'https://shoemee.shop/admin'
 
 
 export const adminApiSlice = adminapiSlice.injectEndpoints({

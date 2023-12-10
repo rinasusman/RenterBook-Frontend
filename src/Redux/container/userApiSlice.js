@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice";
 
-const USERS_URL = 'http://localhost:5000'
+const USERS_URL = 'hhttps://shoemee.shop/'
 
 
 export const usersApiSlice = apiSlice.injectEndpoints({
