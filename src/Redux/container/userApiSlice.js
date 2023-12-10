@@ -1,6 +1,6 @@
 import { apiSlice } from "./apiSlice";
 
-const USERS_URL = 'hhttps://shoemee.shop/'
+const USERS_URL = 'https://shoemee.shop/'
 
 
 export const usersApiSlice = apiSlice.injectEndpoints({
