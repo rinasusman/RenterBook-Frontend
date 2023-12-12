@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Container from '../../Container'
 import Heading from '../../Heading'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -10,7 +10,7 @@ const ListingEdit = () => {
 
     const location = useLocation();
     const { itemData } = location.state;
-
+    console.log(itemData, "itemData:")
     const [title, setTitle] = useState(itemData.title);
     const [locations, setLocation] = useState(itemData.location);
     const [imageSrc, setImageValue] = useState(itemData.imageSrc)
@@ -21,7 +21,7 @@ const ListingEdit = () => {
     const [price, setPrice] = useState(itemData.price);
     const [selectedImages, setSelectedImages] = useState([]);
     const [previewImages, setPreviewImages] = useState(itemData.imageUrl ? [itemData.imageUrl] : []);
-
+    const [imageUrl, setImageUrl] = useState(itemData.imageUrl || []);
     const navigate = useNavigate()
 
 
@@ -34,24 +34,31 @@ const ListingEdit = () => {
 
     const handleUpdate = async () => {
         try {
-            const imageUrls = await Promise.all(
+            // Upload newly selected images
+            const newImageUrls = await Promise.all(
                 Array.from(selectedImages).map(async (image) => {
                     const formData = new FormData();
                     formData.append("file", image);
                     formData.append("upload_preset", "i9govbk0");
                     formData.append('cloud_name', "dxwljcjad");
-
+    
                     const response = await fetch("https://api.cloudinary.com/v1_1/dxwljcjad/image/upload", {
                         method: "POST",
                         body: formData,
                     });
-
+    
                     const data = await response.json();
                     return data.secure_url;
                 })
             );
-            setPreviewImages((prevImages) => [...prevImages, ...imageUrls]);
-
+    
+            // Combine existing and new image URLs
+            const allImageUrls = [...imageUrl, ...newImageUrls];
+    
+            // Update state with combined image URLs
+            setPreviewImages((prevImages) => [...prevImages, ...newImageUrls]);
+    
+            // Update the listing on the server with combined image URLs
             await userAxios.put(`/edithomes/${itemData._id}`, {
                 title,
                 locations,
@@ -61,17 +68,29 @@ const ListingEdit = () => {
                 bathroomCount,
                 description,
                 price,
-                imageUrls: [...previewImages, ...imageUrls],
+                imageUrls: allImageUrls,
             });
-            navigate('/myproperties')
+    
+            navigate('/myproperties');
         } catch (error) {
             console.error('Error updating home:', error);
         }
     };
+    
+    
+    // const handleRemoveImage = (index) => {
+    //     // Remove the image at the specified index from the previewImages array
+    //     setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
+
+    // };
     const handleRemoveImage = (index) => {
-        // Remove the image at the specified index from the previewImages array
+        // Remove the image at the specified index from both selectedImages and previewImages arrays
+        const updatedSelectedImages = Array.from(selectedImages).filter((_, i) => i !== index);
+        setSelectedImages(updatedSelectedImages);
+
         setPreviewImages((prevImages) => prevImages.filter((_, i) => i !== index));
     };
+
     const renderPreviewImages = () => {
         return Array.from(selectedImages).map((image, index) => (
             <div key={index} className="mr-2 mb-2 relative">
@@ -86,19 +105,25 @@ const ListingEdit = () => {
         ));
     };
 
-    // const renderSelectedImages = () => {
-    //     return Array.from(selectedImages).map((image, index) => (
-    //         <div key={index} className="mr-2 mb-2">
-    //             <img className="w-[100px] h-[100px]" src={URL.createObjectURL(image)} alt={`Selected ${index}`} />
-    //             <button
-    //                 className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full cursor-pointer"
-    //                 onClick={() => handleRemoveImage(index)}
-    //             >
-    //                 X
-    //             </button>
-    //         </div>
-    //     ));
-    // };
+
+    const handleRemoveoldImage = async (index) => {
+        try {
+            const updatedImageUrls = [...imageUrl];
+            const removedImageUrl = updatedImageUrls.splice(index, 1)[0];
+
+            // Make a request to your backend API to delete the image URL from MongoDB
+            await userAxios.delete(`/deleteImage/${itemData._id}`, {
+                data: { imageUrl: removedImageUrl },
+            });
+
+            // Update state to reflect the changes
+            setImageUrl(updatedImageUrls);
+        } catch (error) {
+            console.error('Error removing image:', error);
+        }
+    };
+
+
     return (
         <Container>
             <Heading
@@ -220,6 +245,24 @@ const ListingEdit = () => {
                         value={imageSrc}
                     />
                     <hr />
+
+                    <div>
+                        <div>Image URLs:</div>
+                        <div className="flex flex-wrap">
+                            {imageUrl.map((url, index) => (
+                                <div key={index} className="relative inline-block">
+                                    <img className="w-[100px] h-[100px] mr-2 mb-2" src={url} alt={`Image ${index}`} />
+                                    <button
+                                        onClick={() => handleRemoveoldImage(index)} // Add your remove image logic here
+                                        className="absolute top-0 right-0 p-2 bg-red-500 text-white rounded-full"
+                                    >
+                                        X
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <hr />
                     <div>Preview Images:</div>
                     <div className="flex flex-wrap">
                         <div className="flex flex-wrap">{renderPreviewImages()}</div>
@@ -228,6 +271,7 @@ const ListingEdit = () => {
                     {/* <div>Selected Images:</div>
                     <div className="flex flex-wrap">{renderSelectedImages()}</div> */}
                     <hr />
+
                     <div> Add More Images:</div>
 
                     <input type="file" multiple onChange={(e) => setSelectedImages(e.target.files)} />
