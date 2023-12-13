@@ -166,6 +166,7 @@ const SearchModal = () => {
         />
         <DateCalendar
           setSelectedRange={setSelectedRange}
+          bookingData={[]}
         />
 
       </div>
