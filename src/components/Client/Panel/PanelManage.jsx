@@ -10,9 +10,11 @@ import { enUS } from 'date-fns/locale';
 import { useSelector } from 'react-redux'
 
 import useReportHostModal from '../../../Hooks/useReportHostModal'
+import usewalletModal from '../../../Hooks/usewalletModal'
 
 const PanelManage = () => {
     const categoryModal = useReportHostModal();
+    const walletModal = usewalletModal();
     const { userToken } = useSelector((state) => state.auth)
     console.log(userToken, "token>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     const name = userToken?.userSignUp?.name || ""
@@ -188,7 +190,7 @@ const PanelManage = () => {
                         plotOptions: {
                             bar: {
                                 horizontal: false,
-                                columnWidth: '70%', // Adjust the bar width here
+                                columnWidth: '70%', 
                                 endingShape: 'rounded',
                             },
                         },
@@ -325,7 +327,7 @@ const PanelManage = () => {
                     transition  
                     duration-300 
                     ease-out
-                    '>
+                    ' onClick={walletModal.onOpen}>
                         <div>
                             <h2
                                 className='

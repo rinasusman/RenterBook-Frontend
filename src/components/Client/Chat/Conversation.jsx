@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { getUser } from '../../../Api/UserRequests'
 import PropTypes from 'prop-types';
-const Conversation = ({ data, currentUser }) => {
+const Conversation = ({ data, currentUser, unreadCount  }) => {
     console.log(currentUser, "usercurrent:")
     const [userData, setUserData] = useState(null)
 
@@ -55,7 +55,11 @@ const Conversation = ({ data, currentUser }) => {
                     '
                     >
                         <span className='font-semibold'>{userData?.name}</span>
-
+                        {unreadCount > 0 && (
+                    <div className='bg-red-500 text-white rounded-full p-2'>
+                        {unreadCount} unread messages
+                    </div>
+                )}
                     </div>
                 </div>
             </div >

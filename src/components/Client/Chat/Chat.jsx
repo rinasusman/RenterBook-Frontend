@@ -7,6 +7,7 @@ import { userChats } from "../../../Api/ChatRequests";
 import { io } from "socket.io-client";
 
 
+
 const Chat = () => {
 
     const { userToken } = useSelector((state) => state.auth)
@@ -18,7 +19,8 @@ const Chat = () => {
     const [sendMessage, setSendMessage] = useState(null);
     const [receivedMessage, setReceivedMessage] = useState(null);
     console.log(onlineUsers)
-
+    const [unreadMessages, setUnreadMessages] = useState({});
+console.log("unreadMessages",unreadMessages)
     useEffect(() => {
         const getChats = async () => {
             try {
@@ -56,10 +58,19 @@ const Chat = () => {
         socket.current.on("recieve-message", (data) => {
             console.log("Message received:", data);
             setReceivedMessage(data);
-        }
 
-        );
-    }, []);
+            // Update unread messages count
+            setUnreadMessages((prevUnread) => {
+                const updatedUnread = { ...prevUnread };
+                if (data.senderId !== user._id) {
+                    // Increment unread count for the sender
+                    updatedUnread[data.senderId] = (updatedUnread[data.senderId] || 0) + 1;
+                }
+                return updatedUnread;
+                console.log("updatedUnread",updatedUnread)
+            });
+        });
+    }, [user]);
 
     return (
         <Container>
@@ -100,12 +111,18 @@ const Chat = () => {
                                 <div key={chat && chat._id ? chat._id : 'fallbackId'}
                                     onClick={() => {
                                         setCurrentChat(chat && chat._id ? chat : null)
+                                         // Clear unread count for the selected chat
+                                    setUnreadMessages((prevUnread) => {
+                                        const updatedUnread = { ...prevUnread };
+                                        updatedUnread[chat._id] = 0;
+                                        return updatedUnread;
+                                    });
                                     }}
                                 >
                                     <Conversation
                                         data={chat}
                                         currentUser={user._id}
-
+                                        unreadCount={unreadMessages[chat._id] || 0}
                                     />
                                 </div>
                             ))}

@@ -39,7 +39,7 @@ const ReportHostModal = () => {
     const tokens = localStorage.getItem('usertoken');
     console.log("Tokens:", tokens);
     const headers = {
-        'Authorization': Bearer ${tokens},
+        'Authorization': `Bearer ${tokens}`,
         'Content-Type': 'application/json',
     };
     try {
