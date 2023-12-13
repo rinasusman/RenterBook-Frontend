@@ -8,6 +8,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import adminAxios from '../../../Axios/adminAxios';
 import useReportHostModal from "../../../Hooks/useReportHostModal.js";
+import userAxios from "../../../Axios/guestAxios.js";
 const ReportHostModal = () => {
 
 
@@ -35,8 +36,14 @@ const ReportHostModal = () => {
     const endDateString = endDate.toISOString();
     const payload = { startDateString, endDateString }
     console.log(payload, "payload::::")
+    const tokens = localStorage.getItem('usertoken');
+    console.log("Tokens:", tokens);
+    const headers = {
+        'Authorization': Bearer ${tokens},
+        'Content-Type': 'application/json',
+    };
     try {
-      const response = await adminAxios.get("/pdfbooking", { params: payload });
+      const response = await userAxios.get("/pdfbookingHost", { params: payload },{ headers });
 
       const bookings = response.data;
       console.log(bookings, "bookings:")
