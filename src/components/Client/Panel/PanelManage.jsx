@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Container from '../../Container'
 import Heading from '../../Heading'
-import { TbBrandBooking, TbWallet } from 'react-icons/tb'
+import { TbBrandBooking, TbReport, TbWallet } from 'react-icons/tb'
 import { FaRegCalendarMinus } from 'react-icons/fa'
 import userAxios from '../../../Axios/guestAxios';
 import Chart from "react-apexcharts";
@@ -9,7 +9,10 @@ import { startOfMonth, endOfMonth, eachDayOfInterval, format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { useSelector } from 'react-redux'
 
+import useReportHostModal from '../../../Hooks/useReportHostModal'
+
 const PanelManage = () => {
+    const categoryModal = useReportHostModal();
     const { userToken } = useSelector((state) => state.auth)
     console.log(userToken, "token>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
     const name = userToken?.userSignUp?.name || ""
@@ -226,7 +229,35 @@ const PanelManage = () => {
             gap-8
           "
             >
-
+ <div
+                className='
+                flex 
+                items-center 
+                justify-between
+                '>
+                <h1
+                    className='
+                    text-[#5a5c69] 
+                    text-[28px] 
+                    leading-[34px] 
+                    font-normal
+                    '>
+                </h1>
+                <button
+                    className='
+                    bg-rose-500 
+                    h-[32px] 
+                    rounded-[3px] 
+                    text-white 
+                    flex 
+                    items-center 
+                    px-[30px] 
+                    cursor-pointer
+                    gap-2
+                    'onClick={categoryModal.onOpen} >
+                    Generate Report <TbReport size={25} />
+                </button>
+            </div>
                 <div
                     className='
                 grid 

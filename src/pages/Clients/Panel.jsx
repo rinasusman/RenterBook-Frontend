@@ -9,7 +9,7 @@ import ForgotpassOtpModal from '../../components/Client/Modal/ForgotpassOtpModal
 import ResetpassModal from '../../components/Client/Modal/ResetpassModal'
 import RentModal from '../../components/Client/Modal/RentModal'
 import PanelManage from '../../components/Client/Panel/PanelManage'
-
+import ReportHostModal from '../../components/Client/Modal/ReportHostModal'
 const Panel = () => {
     return (
         <>
@@ -25,7 +25,7 @@ const Panel = () => {
             <RentModal />
             <div className="pb-20 pt-20">
                 <PanelManage />
-
+                <ReportHostModal />
             </div >
         </>
     )
