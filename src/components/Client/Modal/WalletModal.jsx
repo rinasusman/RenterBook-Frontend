@@ -44,14 +44,18 @@ const WalletModal = () => {
     fetchWalletHistory();
   }, []);
 
-
+ const formatDate = (dateString) => {
+    const options = { day: 'numeric', month: 'numeric', year: 'numeric' };
+    const formattedDate = new Date(dateString).toLocaleDateString('en-GB', options);
+    return formattedDate;
+  };
   const bodyContent = (
     <div className="flex flex-col gap-4 justify-center items-center">
   
   {walletHistory.map((entry) => (
-        <div key={entry._id}>
-          <p>Date: {entry.date}</p>
-          <p>Amount: {entry.amount}</p>
+        <div key={entry._id} className="flex flex-row justify-between gap-7">
+          <p>Date:{formatDate(entry.date)}</p>
+          <p className="text-lime-500">Amount: {entry.amount}</p> Credited
         </div>
       ))}
 
