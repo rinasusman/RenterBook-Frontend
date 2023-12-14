@@ -1,10 +1,10 @@
 import React, { useCallback } from "react";
 
-import { FcGoogle } from "react-icons/fc";
+// import { FcGoogle } from "react-icons/fc";
 import { useForm } from "react-hook-form";
-
+import GoogleLogin from "react-google-login"
 import Heading from "../../Heading";
-import Button from "../../Button";
+// import Button from "../../Button";
 import Modal from "./Modal";
 import Input from "../inputs/Input";
 import useRegisterModal from "../../../Hooks/useRegisterModal";
@@ -23,6 +23,7 @@ const LoginModal = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [login] = useLoginMutation();
+ 
 
 
 
@@ -109,7 +110,13 @@ const LoginModal = () => {
     });
   }, [loginModal, emailModal, reset])
 
-
+const handleFailure=(result)=>{
+alert(result)
+console.log("failure")
+}
+const handleLogin = async (googleData) => {
+  console.log(googleData)
+};
   const bodyContent = (
     <div className="flex flex-col gap-4">
 
@@ -151,8 +158,16 @@ const LoginModal = () => {
   const footerContent = (
     <div className="flex flex-col gap-4 mt-3">
       <hr />
-      <Button outline label="Continue with Google" icon={FcGoogle} />
-
+      {/* <Button outline label="Continue with Google" icon={FcGoogle} /> */}
+      <div>
+        <GoogleLogin
+              clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+              buttonText="Log in with Google"
+              onSuccess={handleLogin}
+              onFailure={handleFailure}
+              cookiePolicy={'single_host_origin'}
+            ></GoogleLogin>
+      </div>
 
       <div className="text-neutral-500 text-center mt-4 font-light">
         <p>
